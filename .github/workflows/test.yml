@@ -13,10 +13,11 @@ on:
 jobs:
   winget:
     runs-on: windows-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        package: [kuml, kuml-desktop]
+        package: [kuml-desktop]
     steps:
       - uses: actions/checkout@v4
 
@@ -38,18 +39,16 @@ jobs:
         run: |
           winget settings --enable LocalManifestFiles
           $dir = (Get-ChildItem "manifests/k/kuml-dev/${{ matrix.package }}/*" -Directory | Select-Object -First 1).FullName
-          winget install --manifest $dir --accept-package-agreements --accept-source-agreements --disable-interactivity
+          winget install --manifest $dir --accept-package-agreements --accept-source-agreements --disable-interactivity --verbose-logs
           winget list --id kuml-dev.${{ matrix.package }} --accept-source-agreements
 
-      - name: Run the installed program
-        if: matrix.package == 'kuml'
-        shell: pwsh
-        run: |
-          $env:PATH = [Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [Environment]::GetEnvironmentVariable("PATH", "Machine")
-          $c = Get-Command kuml -ErrorAction SilentlyContinue
-          if (-not $c) { throw "kuml is not on PATH after the WinGet install" }
-          Write-Host "kuml -> $($c.Source)"
-          kuml --version
+      - name: Upload winget logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: winget-logs
+          path: ~/AppData/Local/Packages/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe/LocalState/DiagOutputDir/
+          if-no-files-found: ignore
 
       - name: Uninstall
         shell: pwsh
