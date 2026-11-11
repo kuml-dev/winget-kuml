@@ -40,7 +40,8 @@ jobs:
           winget settings --enable LocalManifestFiles
           $dir = (Get-ChildItem "manifests/k/kuml-dev/${{ matrix.package }}/*" -Directory | Select-Object -First 1).FullName
           winget install --manifest $dir --accept-package-agreements --accept-source-agreements --silent --disable-interactivity --verbose-logs
-          winget list --id kuml-dev.${{ matrix.package }} --accept-source-agreements
+          winget list --name kuml-desktop --accept-source-agreements
+          if ($LASTEXITCODE -ne 0) { throw "kuml-desktop is not listed as installed" }
 
       - name: Upload winget logs
         if: always()
@@ -53,4 +54,7 @@ jobs:
       - name: Uninstall
         shell: pwsh
         run: |
-          winget uninstall --id kuml-dev.${{ matrix.package }} --accept-source-agreements --disable-interactivity
+          $dir = (Get-ChildItem "manifests/k/kuml-dev/${{ matrix.package }}/*" -Directory | Select-Object -First 1).FullName
+          winget uninstall --manifest $dir --silent --disable-interactivity --accept-source-agreements
+          winget list --name kuml-desktop --accept-source-agreements
+          if ($LASTEXITCODE -eq 0) { throw "kuml-desktop is still installed" }
