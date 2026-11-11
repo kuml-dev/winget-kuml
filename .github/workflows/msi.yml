@@ -1,0 +1,52 @@
+name: MSI silent install
+
+# Diagnoses the silent install of the desktop MSI without WinGet: runs msiexec
+# with a verbose log and a time limit, then uploads the log.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag of the MSI"
+        default: "v0.56.0"
+
+jobs:
+  msi:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Download the MSI
+        shell: pwsh
+        run: |
+          $v = "${{ github.event.inputs.tag }}".TrimStart('v')
+          gh release download "${{ github.event.inputs.tag }}" --repo kuml-dev/kUML --pattern "kuml-desktop-$v.msi" --dir msi
+          Get-ChildItem msi | Format-Table Name, Length
+
+      - name: Install silently with a verbose log
+        shell: pwsh
+        run: |
+          $msi = (Get-ChildItem msi/*.msi | Select-Object -First 1).FullName
+          $p = Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /qn /norestart /l*v `"$PWD\install.log`"" -PassThru
+          if (-not $p.WaitForExit(300000)) {
+            Write-Host "msiexec still running after 5 minutes"
+            Get-Process | Where-Object { $_.ProcessName -match 'msiexec|kuml|java' } | Format-Table Id, ProcessName, StartTime
+            $p | Stop-Process -Force
+            exit 2
+          }
+          Write-Host "msiexec exit code: $($p.ExitCode)"
+          exit $p.ExitCode
+
+      - name: Show the end of the log
+        if: always()
+        shell: pwsh
+        run: |
+          if (Test-Path install.log) { Get-Content install.log -Tail 60 }
+
+      - name: Upload the log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: msi-install-log
+          path: install.log
+          if-no-files-found: ignore
