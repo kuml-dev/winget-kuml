@@ -39,7 +39,7 @@ jobs:
         run: |
           winget settings --enable LocalManifestFiles
           $dir = (Get-ChildItem "manifests/k/kuml-dev/${{ matrix.package }}/*" -Directory | Select-Object -First 1).FullName
-          winget install --manifest $dir --accept-package-agreements --accept-source-agreements --disable-interactivity --verbose-logs
+          winget install --manifest $dir --accept-package-agreements --accept-source-agreements --silent --disable-interactivity --verbose-logs
           winget list --id kuml-dev.${{ matrix.package }} --accept-source-agreements
 
       - name: Upload winget logs
