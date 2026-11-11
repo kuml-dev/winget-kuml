@@ -59,3 +59,5 @@ jobs:
           $left = winget list --name kuml-desktop --accept-source-agreements | Out-String
           Write-Host $left
           if ($left -match 'ARP\\') { throw "kuml-desktop is still installed" }
+          # winget list returns a non-zero code when nothing is found; that is the expected result here.
+          exit 0
