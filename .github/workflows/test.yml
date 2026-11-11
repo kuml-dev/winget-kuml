@@ -56,5 +56,6 @@ jobs:
         run: |
           $dir = (Get-ChildItem "manifests/k/kuml-dev/${{ matrix.package }}/*" -Directory | Select-Object -First 1).FullName
           winget uninstall --manifest $dir --silent --disable-interactivity --accept-source-agreements
-          winget list --name kuml-desktop --accept-source-agreements
-          if ($LASTEXITCODE -eq 0) { throw "kuml-desktop is still installed" }
+          $left = winget list --name kuml-desktop --accept-source-agreements | Out-String
+          Write-Host $left
+          if ($left -match 'ARP\\') { throw "kuml-desktop is still installed" }
