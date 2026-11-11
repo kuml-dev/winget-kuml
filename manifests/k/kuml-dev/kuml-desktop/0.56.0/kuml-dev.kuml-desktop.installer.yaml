@@ -2,9 +2,18 @@
 PackageIdentifier: kuml-dev.kuml-desktop
 PackageVersion: 0.56.0
 InstallerType: wix
+Scope: machine
 Installers:
   - Architecture: x64
     InstallerUrl: https://github.com/kuml-dev/kUML/releases/download/v0.56.0/kuml-desktop-0.56.0.msi
     InstallerSha256: 1A2B7ED9946C4CA742F98A466802A47B4317FE0F43D5A6C5E8AB0B6858D559F5
+    ProductCode: '{A26E6C0E-0A0F-3080-92AE-271CC1A3B755}'
+    AppsAndFeaturesEntries:
+      - DisplayName: kuml-desktop
+        Publisher: kuml.dev
+        DisplayVersion: 56.0.0
+        ProductCode: '{A26E6C0E-0A0F-3080-92AE-271CC1A3B755}'
+        UpgradeCode: '{C4F2B3D1-A1E5-4B8C-9D7F-6E3A2C8B4F1E}'
+        InstallerType: wix
 ManifestType: installer
 ManifestVersion: 1.6.0
