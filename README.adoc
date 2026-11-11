@@ -1,0 +1,8 @@
+= WinGet manifests for kUML
+
+Staging area for the https://learn.microsoft.com/en-us/windows/package-manager/[WinGet] manifests of https://kuml.dev[kUML]. The public submission is a pull request to https://github.com/microsoft/winget-pkgs[microsoft/winget-pkgs]; this repository only holds the manifests and an install test on a clean Windows runner.
+
+* `kuml-dev.kuml` — command-line tool, the Windows runtime ZIP installed as a portable package with the command alias `kuml` (bundled Java 21 runtime).
+* `kuml-dev.kuml-desktop` — desktop application, the MSI installer.
+
+Not yet submitted to winget-pkgs.

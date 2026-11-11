@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+PackageIdentifier: kuml-dev.kuml
+PackageVersion: 0.56.0
+InstallerType: zip
+NestedInstallerType: portable
+NestedInstallerFiles:
+  - RelativeFilePath: kuml-0.56.0\bin\kuml.bat
+    PortableCommandAlias: kuml
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/kuml-dev/kUML/releases/download/v0.56.0/kuml-runtime-0.56.0-windows-x86_64.zip
+    InstallerSha256: EDAFD2907310457A05C1BB27DB0A474DA37DAD5EA1A6C8C8FA8070742C10E045
+ManifestType: installer
+ManifestVersion: 1.6.0

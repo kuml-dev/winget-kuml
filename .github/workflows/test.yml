@@ -1,0 +1,57 @@
+name: Test manifests
+
+# Validates the WinGet manifests and installs them on a clean Windows runner.
+# This repository is a staging area; the public submission is a pull request to
+# microsoft/winget-pkgs.
+on:
+  push:
+    paths:
+      - "manifests/**"
+      - ".github/workflows/test.yml"
+  workflow_dispatch:
+
+jobs:
+  winget:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [kuml, kuml-desktop]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show winget
+        shell: pwsh
+        run: |
+          $w = Get-Command winget -ErrorAction SilentlyContinue
+          if (-not $w) { throw "winget is not available on this runner" }
+          winget --version
+
+      - name: Validate the manifests
+        shell: pwsh
+        run: |
+          $dir = (Get-ChildItem "manifests/k/kuml-dev/${{ matrix.package }}/*" -Directory | Select-Object -First 1).FullName
+          winget validate --manifest $dir
+
+      - name: Install from the local manifest
+        shell: pwsh
+        run: |
+          winget settings --enable LocalManifestFiles
+          $dir = (Get-ChildItem "manifests/k/kuml-dev/${{ matrix.package }}/*" -Directory | Select-Object -First 1).FullName
+          winget install --manifest $dir --accept-package-agreements --accept-source-agreements --disable-interactivity
+          winget list --id kuml-dev.${{ matrix.package }} --accept-source-agreements
+
+      - name: Run the installed program
+        if: matrix.package == 'kuml'
+        shell: pwsh
+        run: |
+          $env:PATH = [Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [Environment]::GetEnvironmentVariable("PATH", "Machine")
+          $c = Get-Command kuml -ErrorAction SilentlyContinue
+          if (-not $c) { throw "kuml is not on PATH after the WinGet install" }
+          Write-Host "kuml -> $($c.Source)"
+          kuml --version
+
+      - name: Uninstall
+        shell: pwsh
+        run: |
+          winget uninstall --id kuml-dev.${{ matrix.package }} --accept-source-agreements --disable-interactivity

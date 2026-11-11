@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+PackageIdentifier: kuml-dev.kuml-desktop
+PackageVersion: 0.56.0
+PackageLocale: en-US
+Publisher: kuml.dev
+PublisherUrl: https://kuml.dev
+PackageName: kUML Desktop
+PackageUrl: https://kuml.dev
+License: Apache-2.0
+LicenseUrl: https://github.com/kuml-dev/kUML/blob/master/LICENSE
+ShortDescription: Desktop application for kUML, the Kotlin-native UML and SysML 2 modelling DSL.
+Tags:
+  - uml
+  - sysml
+  - modelling
+  - kotlin
+  - desktop
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+PackageIdentifier: kuml-dev.kuml-desktop
+PackageVersion: 0.56.0
+InstallerType: wix
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/kuml-dev/kUML/releases/download/v0.56.0/kuml-desktop-0.56.0.msi
+    InstallerSha256: 1A2B7ED9946C4CA742F98A466802A47B4317FE0F43D5A6C5E8AB0B6858D559F5
+ManifestType: installer
+ManifestVersion: 1.6.0
